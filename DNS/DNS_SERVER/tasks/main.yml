@@ -1,0 +1,31 @@
+---
+# tasks file for DNS_SERVER
+- name: install DNS Packages
+  yum:
+    name: bind
+    state: installed
+- name: Deploy DNS Configuration
+  template: 
+    src: named_conf.j2
+    dest: /etc/named.conf
+    backup: yes
+- name: Deploy Zone
+  lineinfile:
+    path: /etc/named.rfc1912.zones
+    line: 'zone "{{ DNS.DOMAIN }}" IN {
+                type {{ DNS.TYPE }};
+                file "{{ DNS.ZONEFILE }}";
+                allow-update { none; };
+               };'
+- name: Create Zone {{ DNS.ZONEFILE }}
+  template:
+    src: named_zones.j2
+    dest: /var/named/{{ DNS.ZONEFILE }}
+    owner: root
+    group: named
+    backup: yes
+#- name: restart named service
+#  servcie: 
+#    state: restarted
+#    name: named
+    

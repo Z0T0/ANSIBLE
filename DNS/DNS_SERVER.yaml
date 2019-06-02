@@ -1,0 +1,17 @@
+---
+- hosts: 10.0.0.202
+  remote_user: root
+  vars:
+    DNS:
+      DOMAIN: ChenHong.com
+      TYPE: master
+      ZONEFILE: ChenHong.com.zone
+    DOMAINS:
+    - HOST: www
+      IP: 10.0.0.210
+      ACTION: A
+    - HOST: ftp
+      IP: 10.0.0.210
+      ACTION: A
+  roles:
+  - DNS_SERVER

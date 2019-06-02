@@ -1,0 +1,14 @@
+$TTL 1D
+@	IN SOA	@ dns.{{ DNS.DOMAIN }}. (
+					0	; serial
+					1D	; refresh
+					1H	; retry
+					1W	; expire
+					3H )	; minimum
+	NS	@
+	A	127.0.0.1
+	NS 	dns.{{ DNS.DOMAIN }}.
+dns	A	10.0.0.202
+{% for DOMAIN in DOMAINS %}
+{{ DOMAIN.HOST }}	{{ DOMAIN.ACTION }}	{{ DOMAIN.IP }}
+{% endfor %}
