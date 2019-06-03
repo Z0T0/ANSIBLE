@@ -1,0 +1,18 @@
+---
+# vars file for LNMP
+function: LNMP
+NGINX:
+  SERVER_NAME: www.ChenHong.com
+  KEY: /etc/pki/tls/private/www.ChenHong.com.key
+  CERTIFICATE: /etc/pki/tls/www.ChenHong.com.crt
+  TIMEOUT: 5m
+MARIADB:
+  PASSWORD: zt1997
+  ANONYMOUS: Y
+  TEST: Y
+# wordpress configuration username password 
+  WUSERNAME: wordpress
+  WPASSWORD: 123456
+  WHOST: localhost
+  
+

@@ -1,0 +1,7 @@
+---
+# tasks file for LNMP(Linux+Nginx+Mariadb+PHP)
+- include: install.yaml
+- include: nginx.yaml
+- include: mariadb.yaml
+- include: php.yaml
+

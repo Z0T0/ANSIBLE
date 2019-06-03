@@ -1,0 +1,37 @@
+---
+- name: install epel repo
+  yum: 
+    name: epel-release 
+   state: installed
+- name: clean all
+  shell: yum clean all
+- name: list repos
+  yum:
+    list: repos
+  register: result
+#- name: install packages
+#  yum: name={{ item }} state=installed
+#  with_items:
+#    - nginx
+#    - mariadb-server
+#    - php*
+#  when: result is succeeded
+- name: install packages
+  yum:
+    name:
+    - nginx
+    - mariadb-server
+    - mariadb
+    - php-fpm
+    - php-mysql
+    - openssl-devel
+    - unzip
+    state: installed
+  when: result is succeeded
+- name: copy wordpress package to work Nginx
+  copy:
+    src: wordpress-4.9.4-zh_CN.zip
+    dest: /usr/local
+- name: Unzip WorkPress Packages
+  shell: cd /usr/share/nginx/html/ && unzip /usr/local/wordpress-4.9.4-zh_CN.zip
+  

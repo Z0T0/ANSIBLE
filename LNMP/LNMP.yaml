@@ -1,0 +1,5 @@
+---
+- hosts: 10.0.0.203
+  remote_user: root
+  roles:
+  - LNMP

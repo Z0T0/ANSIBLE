@@ -1,0 +1,10 @@
+#PHP configuration
+- name: start php-fpm
+  service: 
+    name: php-fpm
+    state: started
+- name: deploy wp-config.php
+  template:
+    backup: yes
+    src: wp_config_php.j2
+    dest: /usr/share/nginx/html/wordpress/wp-config.php

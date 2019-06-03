@@ -1,0 +1,23 @@
+#- name: deploy https nginx configuration file
+#  template:
+#    src: /etc/nginx/conf.d/nginx_https.j2
+#    dest: /etc/nginx/nginx.conf
+#    owner: nginx
+#    group: nginx
+#    backup: yes
+- name: deploy nginx_server configuration file
+  template: 
+    src: nginx_server.j2
+    dest: /etc/nginx/conf.d/nginx.conf
+    owner: nginx
+    group: nginx
+    backup: yes
+- name: nginx test configuration
+  shell: nginx -t
+  register: result
+- name: start nginx
+  service: 
+    state: started 
+    name: nginx
+  when: result is succeeded
+

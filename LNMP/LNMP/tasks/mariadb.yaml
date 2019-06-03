@@ -1,0 +1,21 @@
+#init mararidb-server
+- name: install expect packages
+  yum:
+    state: installed
+    name: expect
+- name: 
+- name: start mariadb
+  service:
+    name: mariadb
+    state: started
+- name: init mariadb-server
+  script: /usr/local/mysql_secure_install.sh {{ MARIADB.PASSWORD }} {{ MARIADB.ANONYMOUS }} {{ MARIADB.TEST }}
+- name: create database
+  shell: mysql -uroot -p{{ MARIADB.PASSWORD }} -e"create database wordpress;"
+- name: create user and grant
+  shell: mysql -uroot -p{{ MARIADB.PASSWORD }} -e"grant all on wordpress.* to '{{ MARIADB.WUSERNAME }}'@'%' identified by '{{ MARIADB.WPASSWORD }}';"
+- name: create user and grant localhost
+  shell: mysql -uroot -p{{ MARIADB.PASSWORD }} -e"grant all on wordpress.* to '{{ MARIADB.WUSERNAME }}'@'localhost' identified by '{{ MARIADB.WPASSWORD }}';"
+- name: flush prvileges
+  shell: mysql -uroot -p{{ MARIADB.PASSWORD }} -e"flush privileges;"
+
