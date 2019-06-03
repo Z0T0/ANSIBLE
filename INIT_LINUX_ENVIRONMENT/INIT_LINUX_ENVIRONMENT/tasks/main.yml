@@ -1,0 +1,3 @@
+---
+# init Linux environment
+- include: init_linux_environment.yml

@@ -1,0 +1,5 @@
+- hosts: 10.0.0.202
+  remote_user: root
+  roles:
+  - INIT_LINUX_ENVIRONMENT
+  

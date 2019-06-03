@@ -1,0 +1,103 @@
+#Initialize Linux Base Envrionment
+#syn time zone
+- name:  remove local time zone
+  shell: rm -rvf /etc/localtime
+- name: sync time zone
+  file:
+    src: /usr/share/zoneinfo/Asia/Shanghai
+    dest: /etc/localtime
+    state: link
+#shutdown SELinux
+#- name: set SELinux to permissive
+#  shell: setenforce 0
+- name: Disable SELinux ,but must be rebooted
+  lineinfile:
+    path: /etc/selinux/config
+    regexp: ^SELINUX=enforcing$
+    line: SELINUX=disabled
+    state: present
+#Create dev user Account, the password is 123456, please change
+- name: create dev user
+  user:
+    name: devuser
+    shell: /bin/bash
+    comment: deployment account
+    password: $6$MikS997d$q1H74Rgv6CzznIDpZNJH.LejrQPE6nLH.Nex.zpZc6zDODzJytaEppEOpO2koN7/aLEbYq.pUxMtrGqU5ex660
+- name: set dev user permission
+  lineinfile:
+    path: /etc/sudoers
+    line: devuser        ALL=(ALL)        ALL, !/usr/bin/passwd root, !/usr/bin/vi /etc/sudoers, !/bin/bin/visodu, !/usr/bin/reboot, !/bin/su - root, !/bin/su, !/bin/vi /etc/ssh/*, !/bin/vim /etc/ssh/*, !/bin/chmod + 777 /etc/*
+    state: present
+#Create sa user Account, the password is 123456, please change
+- name: create sa user
+  user:
+    name: sauser
+    shell: /bin/bash
+    groups: wheel
+    comment: management account 
+    password: $6$MikS997d$q1H74Rgv6CzznIDpZNJH.LejrQPE6nLH.Nex.zpZc6zDODzJytaEppEOpO2koN7/aLEbYq.pUxMtrGqU5ex660
+#Close ssh connect root account
+- name: close ssh connect root account
+  lineinfile:
+    path: /etc/ssh/ssh_config
+    regex: ^#PermitRootLogin yes$ 
+    line: PermitRootLogin no
+    state: present
+#Stop firewalld and Disabled firewalld
+- name: stop firewalld
+  service: 
+    name: firewalld
+    state: stopped
+    enabled: no
+#Install base rpm packags
+#- name: Install base rpm packages
+#  yum:
+#    name:
+#    - net-tools
+#    - bash-completion
+#    - vim
+#    - tcpdump
+#    - chrony
+#    - epel-release
+#    - lsof
+#    state: present
+# Delete Ctrl+Alt+Del target
+- name: delete ctrl alt del target
+  file:
+    name: /usr/lib/systemd/system/ctrl-alt-del.target
+    state: absent
+# Reload the configuration file
+- name: reload the configuration file
+  shell: systemctl daemon-reload
+#Set History
+- name: Set histsize
+  lineinfile:
+    path: /etc/profile
+    line: HISTSIZE=10000
+    regexp: ^HISTSIZE=1000$
+    state: present
+- name: Create History Directory
+  file:
+    path: /var/log/.history
+    state: directory
+    mode: 777
+- name: Copy history script
+  copy: 
+    src: history.sh
+    dest: /etc/profile.d/history.sh
+    owner: root
+    group: root
+    mode: 644
+#set ttl timeout
+- name: Set timeout
+  lineinfile:
+    line: export TMOUT=300
+    path: /etc/profile
+    state: present 
+- name: Source profile
+  shell: source /etc/profile
+#Reload sshd
+- name: Restart sshd
+  service:
+    name: sshd
+    state: restarted
