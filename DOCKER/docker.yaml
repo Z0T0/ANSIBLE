@@ -1,0 +1,38 @@
+# Install Docker
+- hosts: docker
+  remote_user: root
+  vars:
+#    registry_mirrors: "https://registry.docker-cn.com"
+  tasks:
+  - name: copy docker.repo
+    copy:
+      src: /ANSIBLE/DOCKER/docker-ce.repo
+      dest: /etc/yum.repos.d/
+      backup: yes
+  - name: clean all 
+    shell: yum clean all
+  - name: yum repolist
+    yum:
+      list: repos
+# install docker-ce community release
+  - name: install docker
+    yum:
+      name: docker-ce
+      state: installed
+  - name: copy daemon conf
+    copy: 
+      src: /ANSIBLE/DOCKER/daemon_json.j2
+      dest: /etc/docker/daemon.json
+      backup: yes
+  - name: restart docker daemon
+    service: 
+      name: docker
+      state: restarted
+  - name: set ip_forward to 1
+#    shell: echo 1 > /proc/sys/net/ipv4/ip_forward
+    lineinfile:
+      line: net.ipv4.ip_forward=1
+      path: /etc/sysctl.conf
+      state: present
+  - name: take effect the net.ipv4.ip_forward variables
+    shell: sysctl -p
